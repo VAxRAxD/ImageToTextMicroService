@@ -18,7 +18,8 @@ def get_settings():
 DEBUG=get_settings().debug
 
 BASE_DIR=pathlib.Path(__file__).parent
-UPLOAD_DIR=BASE_DIR/"uploaded"
+UPLOAD_DIR=BASE_DIR/"uploads"
+UPLOAD_DIR.mkdir(exist_ok=True)
 
 app=FastAPI()
 templates=Jinja2Templates(directory=str(BASE_DIR/"templates"))
@@ -32,10 +33,10 @@ def home(request:Request, settings:Settings=Depends(get_settings)):
 async def imgEcho(file:UploadFile=File(...), settings:Settings=Depends(get_settings)):
     if not settings.echo_active:
         raise HTTPException(detail="Invalid Endpoint", status_code=400)
-    bytes=io.BytesIO(await file.read())
+    bytes_str=io.BytesIO(await file.read())
     filename=pathlib.Path(file.filename)
     fileext=filename.suffix
-    dest=UPLOAD_DIR/f"{uuid.uuid1}{fileext}"
-    with open(str(dest),'wb') as file:
-        file.write(bytes)
+    dest=UPLOAD_DIR/f"{uuid.uuid1()}{fileext}"
+    with open(str(dest),'wb') as out:
+        out.write(bytes_str.read())
     return dest
