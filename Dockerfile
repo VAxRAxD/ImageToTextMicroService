@@ -10,7 +10,6 @@ RUN apt-get update && \
         python3-dev \
         tesseract-ocr \
     && python3 -m pip install --no-cache-dir --upgrade -r requirements.txt \
-    && sudo apt install docker.io
 
 COPY . .
 
