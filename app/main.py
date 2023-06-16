@@ -27,6 +27,10 @@ def verify_auth(authorization=Header(None),settings:Settings=Depends(get_setting
     if authorization != settings.app_auth_token:
         raise HTTPException(detail="Unauthorized Response", status_code=401)
 
+@app.get("/")
+def home():
+    return {"Deployment":"Success"}
+
 @app.post("/convert/")
 async def imgToText(file:UploadFile=File(...), authorization=Header(None), settings:Settings=Depends(get_settings)):
     verify_auth(authorization, settings)
