@@ -1,16 +1,31 @@
 pipeline{
     agent any
-    stages{
-        stage('Fetch Code'){
-            steps{
-                git branch:'master',url:'https://github.com/VAxRAxD/ImageToTextMicroService.git'
+    environment {
+        registryCredential = 'ecr:us-east-1:awscred'
+        appRegistry = "031677989988.dkr.ecr.us-east-1.amazonaws.com/img-txt-microservice"
+        microserviceRegistry = "https://031677989988.dkr.ecr.us-east-1.amazonaws.com"
+    }
+    stages {
+        stage('Fetch code'){
+            steps {
+                git branch: 'master', url: 'https://github.com/VAxRAxD/ImageToTextMicroService.git'
             }
         }
-        stage('Build Image'){
+        stage('Build App Image') {
+            steps {
+                script {
+                    dockerImage = docker.build( appRegistry + ":$BUILD_NUMBER", ".")
+                }
+            }
+        }
+        stage('Upload App Image') {
             steps{
-                sh 'docker build -t api-microservice .'
-                sh 'docker stop microservice-container &> /dev/null && docker rm microservice-container &> /dev/null'
-                sh 'docker run -d --name microservice-container -p 8000:8000 api-microservice'
+                script {
+                    docker.withRegistry( microserviceRegistry, registryCredential) {
+                        dockerImage.push("$BUILD_NUMBER")
+                        dockerImage.push('latest')
+                    }
+                }
             }
         }
     }
