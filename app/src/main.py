@@ -29,6 +29,7 @@ def verify_auth(authorization=Header(None),settings:Settings=Depends(get_setting
 
 @app.get("/")
 def healthCheck():
+    print(BASE_DIR.parent)
     return {"InstanceState":"Healthy"}
 
 @app.post("/convert/")
