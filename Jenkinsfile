@@ -1,4 +1,9 @@
 pipeline{
+    ''''
+    1. Create a node in Jenkins for Kubernetes Server
+    2. Assign label 'KOPS' to newly created node
+    3. Add Kubernetes Server's private IP address and private key
+    '''
     agent {label 'KOPS'}
     environment {
         registryCredential = 'ecr:us-east-1:AWS Credentials'
@@ -30,7 +35,6 @@ pipeline{
         }
         stage('Kubernetes Deploy'){
             steps{
-                sh 'pwd'
                 sh 'helm upgrade --install --force imgtxt-api helm/imgtxtcharts --namespace production'
             }
         }
