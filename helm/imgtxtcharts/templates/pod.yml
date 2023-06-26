@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: imgtxt
+  labels:
+    app: imgtxt
+spec:
+  containers:
+    - name: appcontainer
+      image: 031677989988.dkr.ecr.us-east-1.amazonaws.com/img-txt-microservice
+      imagePullPolicy: Always
+      ports:
+        - name: imgtxt-port
+          containerPort: 8000
+  imagePullSecrets:
+    - name: imgtxt-crd
