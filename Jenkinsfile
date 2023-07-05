@@ -16,6 +16,19 @@ pipeline{
                 git branch: 'master', url: 'https://github.com/VAxRAxD/ImageToTextMicroService.git'
             }
         }
+            stage('Sonar Analysis') {
+                environment {
+                    scannerHome = tool 'sonar4.8'
+                }
+                steps {
+                withSonarQubeEnv('sonar') {
+                    sh '''${scannerHome}/bin/sonar-scanner \
+                    -Dsonar.projectKey=img-txt-ms \
+                    -Dsonar.sources=app/src/ \
+                    -Dsonar.token=sqp_865a97b1d19eb2e7c3f06f3695241bdfa0ad7aec'''
+                }
+                }
+            }
         stage('Build App Image') {
             steps {
                 script {
